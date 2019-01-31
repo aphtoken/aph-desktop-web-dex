@@ -1,5 +1,3 @@
-// import Store from 'electron-store';
-import _ from 'lodash';
 import store from 'store2';
 
 export default {
@@ -18,7 +16,7 @@ export default {
   },
 
   set(key, value) {
-    store.set(key, value)
+    store.set(key, value);
 
     return this;
   },

@@ -93,10 +93,7 @@
     "sinon": "^4.0.0",
     "sinon-chai": "^2.8.0",
     "spinthatshit": "^1.0.4",
-<<<<<<< HEAD
     "store2": "^2.7.1",
-=======
->>>>>>> origin/master
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
     "vue-chartjs": "^3.3.1",

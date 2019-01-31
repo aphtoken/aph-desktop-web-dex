@@ -10,7 +10,7 @@ import axios from 'axios';
 import moment from 'moment';
 
 // Services, etc.
-import { contacts, network, settings, storage, wallets } from '@/services';
+import { contacts, network, settings, wallets } from '@/services';
 
 // constants
 import { messages } from '@/constants';
@@ -86,10 +86,6 @@ Vue.component('aph-token-icon', TokenIcon);
 Vue.component('aph-spinner-wrapper', SpinnerWrapper);
 
 // Sync local storage to store.
-<<<<<<< HEAD
-=======
-storage.init();
->>>>>>> origin/master
 contacts.sync();
 network.init();
 settings.sync();

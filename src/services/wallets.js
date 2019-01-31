@@ -3,11 +3,11 @@ import { wallet } from '@cityofzion/neon-js';
 import { store } from '../store';
 import storage from './storage';
 
+const CURRENT_WALLET_KEY = 'currentWallet';
 const WALLETS_STORAGE_KEY = 'wallets';
 let currentWallet = null;
 
 export default {
-
   add(name, data) {
     storage.set(WALLETS_STORAGE_KEY, _.set(this.getAll(), this.cleanForKey(name), data));
     return this;
@@ -61,7 +61,7 @@ export default {
   },
 
   getCurrentWallet() {
-    return currentWallet;
+    return currentWallet || storage.get(CURRENT_WALLET_KEY);
   },
 
   getOne(label) {
@@ -196,6 +196,7 @@ export default {
 
   setCurrentWallet(wallet) {
     currentWallet = wallet;
+    storage.set(CURRENT_WALLET_KEY, wallet);
 
     return this;
   },
