@@ -71,3 +71,7 @@ export default {
   }
 }
 </style>
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master

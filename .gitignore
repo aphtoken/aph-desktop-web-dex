@@ -8,6 +8,11 @@ yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
 src/l10n/todo-*.json
+<<<<<<< HEAD
+=======
+package-lock.json
+yarn.lock
+>>>>>>> origin/master
 
 # Editor directories and files
 .idea
@@ -17,4 +22,7 @@ src/l10n/todo-*.json
 *.njsproj
 *.sln
 .history
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master

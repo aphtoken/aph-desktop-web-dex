@@ -86,6 +86,10 @@ Vue.component('aph-token-icon', TokenIcon);
 Vue.component('aph-spinner-wrapper', SpinnerWrapper);
 
 // Sync local storage to store.
+<<<<<<< HEAD
+=======
+storage.init();
+>>>>>>> origin/master
 contacts.sync();
 network.init();
 settings.sync();

@@ -71,7 +71,7 @@ export default new Router({
     },
     {
       path: '/app',
-      component: require('@/components/appWrapper').default,
+      component: require('@/components/AuthenticatedWrapper').default,
       beforeEnter: (to, from, next) => { // eslint-disable-line
         if (wallets.getCurrentWallet()) {
           return next();
