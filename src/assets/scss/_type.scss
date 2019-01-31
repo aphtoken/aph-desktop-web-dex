@@ -1,0 +1,39 @@
+@function fontSize($size) {
+  @return toRem($size);
+}
+
+%underlined-header {
+  font-family: GilroyMedium;
+  font-size: toRem(20px);
+  font-weight: normal;
+  margin: 0 0 $space 0;
+
+  &:after {
+    background: $purple;
+    content: "";
+    display: block;
+    height: toRem(3px);
+    margin-top: $space-sm;
+    width: toRem(55px);
+  }
+}
+
+%underlined-header-sm {
+  @extend %underlined-header;
+
+  font-size: toRem(16px);
+}
+
+%small-uppercase-grey-label {
+  color: $grey;
+  font-family: GilroyMedium;
+  font-size: toRem(12px);
+  text-transform: uppercase;
+}
+
+%small-uppercase-grey-label-dark {
+  color: $darker-grey;
+  font-family: GilroyMedium;
+  font-size: toRem(12px);
+  text-transform: uppercase;
+}
