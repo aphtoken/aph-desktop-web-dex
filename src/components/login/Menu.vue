@@ -3,9 +3,11 @@
     <router-link class="saved-wallet-btn" to="/login/saved-wallet">
       {{$t('savedWallet')}}
     </router-link>
+    <!--
     <router-link class="private-key-btn" to="/login/ledger">
       {{$t('ledger')}}
     </router-link>
+    -->
     <router-link class="encrypted-key-btn" to="/login/encrypted-key">
       {{$t('encryptedKey')}}
     </router-link>
