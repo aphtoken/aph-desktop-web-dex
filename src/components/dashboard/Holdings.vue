@@ -42,7 +42,7 @@ export default {
         return;
       }
 
-      this.$router.replace('/authenticated/dashboard');
+      this.$router.replace('/app/dashboard');
       this.$store.commit('setStatsToken', holding);
     },
   },
@@ -71,4 +71,3 @@ export default {
   }
 }
 </style>
-

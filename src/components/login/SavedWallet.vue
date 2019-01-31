@@ -59,7 +59,7 @@ export default {
         name: this.wallet,
         passphrase: this.passphrase,
         done: () => {
-          this.$router.push('/authenticated/dashboard');
+          this.$router.push('/app/dashboard');
         },
       });
     },
@@ -93,5 +93,3 @@ export default {
   }
 }
 </style>
-
-

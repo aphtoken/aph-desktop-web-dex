@@ -49,7 +49,7 @@ export default {
     },
 
     shouldShowDexDemoWarning() {
-      return this.$route.path === '/authenticated/dex';
+      return this.$route.path === '/app/dex';
     },
   },
 

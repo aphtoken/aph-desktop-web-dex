@@ -32,7 +32,7 @@ export default {
       this.$store.dispatch('openPrivateKey', {
         wif: this.wif,
         done: () => {
-          this.$router.push('/authenticated/dashboard');
+          this.$router.push('/app/dashboard');
         },
       });
     },
@@ -56,5 +56,3 @@ export default {
   }
 }
 </style>
-
-

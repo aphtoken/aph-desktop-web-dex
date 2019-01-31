@@ -21,7 +21,6 @@
         <p>{{$t('send')}}</p>
       </div>
     </div>
-    <zoom></zoom>
     <address-modal v-if="$store.state.showSendAddressModal" :address="getCurrentWalletAddress()" :onDone="hideSendAddressModal"></address-modal>
   </section>
   <section v-else></section>
@@ -60,7 +59,7 @@ export default {
     },
 
     showSendView() {
-      this.$router.push(`/authenticated/dashboard/${this.sendInProgress ? 'confirming' : 'send'}`);
+      this.$router.push(`/app/dashboard/${this.sendInProgress ? 'confirming' : 'send'}`);
     },
   },
 };
@@ -168,5 +167,3 @@ export default {
   }
 }
 </style>
-
-

@@ -27,7 +27,7 @@ export default {
 
   mounted() {
     if (this.$services.wallets.getCurrentWallet()) {
-      this.$router.push('/authenticated/dashboard');
+      this.$router.push('/app/dashboard');
     }
   },
 };
@@ -87,5 +87,3 @@ export default {
   }
 }
 </style>
-
-

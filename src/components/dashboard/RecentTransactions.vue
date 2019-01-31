@@ -59,7 +59,7 @@ export default {
       if (this.sendInProgress) {
         return;
       }
-      this.$router.replace('/authenticated/dashboard');
+      this.$router.replace('/app/dashboard');
       this.$store.commit('setActiveTransaction', details);
     },
   },
@@ -117,4 +117,3 @@ export default {
   }
 }
 </style>
-

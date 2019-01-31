@@ -78,7 +78,7 @@ export default {
 
       await this.$store.dispatch('openLedger', {
         done: () => {
-          this.$router.push('/authenticated/dashboard');
+          this.$router.push('/app/dashboard');
         },
         failed: () => {
           this.connected = false;
@@ -105,4 +105,3 @@ export default {
   }
 }
 </style>
-

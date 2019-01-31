@@ -70,8 +70,8 @@ export default new Router({
       ],
     },
     {
-      path: '/authenticated',
-      component: require('@/components/AuthenticatedWrapper').default,
+      path: '/app',
+      component: require('@/components/appWrapper').default,
       beforeEnter: (to, from, next) => { // eslint-disable-line
         if (wallets.getCurrentWallet()) {
           return next();
@@ -190,7 +190,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/authenticated/dashboard',
+      redirect: '/app/dashboard',
     },
   ],
 });

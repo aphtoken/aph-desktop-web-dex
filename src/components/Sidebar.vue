@@ -11,51 +11,51 @@
         <aph-icon name="logo-mark"></aph-icon>
       </div>
       <div class="menu link-list">
-        <router-link :to="sendInProgress ? '/authenticated/dashboard/confirming': '/authenticated/dashboard'">
+        <router-link :to="sendInProgress ? '/app/dashboard/confirming': '/app/dashboard'">
           <span class="icon">
             <aph-icon name="dashboard"></aph-icon>
           </span>
           <span class="label">{{ $t('dashboard') }}</span>
         </router-link>
-        <router-link to="/authenticated/dex">
+        <router-link to="/app/dex">
           <span class="icon">
             <aph-icon name="dex"></aph-icon>
           </span>
           <span class="label">{{ $t('tradeDEX') }}</span>
         </router-link>
-        <router-link to="/authenticated/commit">
+        <router-link to="/app/commit">
           <span class="icon">
             <aph-icon name="commit"></aph-icon>
           </span>
           <span class="label">{{$t('commit')}} APH</span>
         </router-link>
         <!--
-        <router-link to="/authenticated/buy-aph">
+        <router-link to="/app/buy-aph">
           <span class="icon">
             <aph-icon name="dex"></aph-icon>
           </span>
           <span class="label">{{ $t('buyAph') }}</span>
         </router-link>
         -->
-        <router-link to="/authenticated/assets">
+        <router-link to="/app/assets">
           <span class="icon">
             <aph-icon name="wallet"></aph-icon>
           </span>
           <span class="label">{{ $t('assets') }}</span>
         </router-link>
-        <router-link to="/authenticated/history">
+        <router-link to="/app/history">
           <span class="icon">
             <aph-icon name="history"></aph-icon>
           </span>
           <span class="label">{{ $t('history') }}</span>
         </router-link>
-        <router-link to="/authenticated/token-sale">
+        <router-link to="/app/token-sale">
           <span class="icon">
             <aph-icon name="ico"></aph-icon>
           </span>
           <span class="label">{{ $t('joinIco') }}</span>
         </router-link>
-        <router-link to="/authenticated/settings">
+        <router-link to="/app/settings">
           <span class="icon">
             <aph-icon name="settings"></aph-icon>
           </span>

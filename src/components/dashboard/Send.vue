@@ -194,7 +194,7 @@ export default {
         }
       }, transactionTimeout);
 
-      this.$router.push('/authenticated/dashboard/confirming');
+      this.$router.push('/app/dashboard/confirming');
     },
 
     end() {
@@ -204,7 +204,7 @@ export default {
       this.amount = '';
       this.currency = null;
       this.showConfirmation = false;
-      this.$router.push('/authenticated/dashboard');
+      this.$router.push('/app/dashboard');
 
       if (this.$services.wallets.getCurrentWallet().isLedger === true) {
         this.$services.ledger.close();
