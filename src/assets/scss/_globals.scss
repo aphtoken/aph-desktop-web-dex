@@ -1,0 +1,26 @@
+$font-size: 12px;
+$font-size-low-res: 10.5px;
+
+@import 'functions';
+@import 'mixins';
+@import 'variables';
+
+@import 'buttons';
+@import 'fonts';
+@import 'print';
+@import 'tiles';
+@import 'tables';
+@import 'type';
+@import 'night';
+@import 'node_modules/spinthatshit/src/loaders';
+
+%light-background {
+  background: white;
+  border-color: white;
+}
+%disabled-text {
+  color: $grey;
+}
+%selected-text {
+  color: #000000;
+}

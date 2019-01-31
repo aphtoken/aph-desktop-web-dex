@@ -1,0 +1,29 @@
+@media print {
+  #login {
+    .left {
+      display: none;
+    }
+
+    .right-content.login-wallet-created {
+      background: white;
+    }
+  }
+
+  .aph-copy-text {
+    display: none;
+  }
+
+  .btn-group {
+    display: none !important;
+  }
+
+  #sidebar, #portfolio-header {
+    display: none;
+  }
+
+  #aph-wallet-backup-modal {
+    .content {
+      width: 100%;
+    }
+  }
+}
