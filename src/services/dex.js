@@ -178,7 +178,7 @@ export default {
 
         if (order.assetIdToSell === assets.NEO) {
           const neoHolding = neo.getHolding(assets.NEO);
-          if (neoHolding.contractBalance < order.quantityToSell) {
+          if (neoHolding.contractBalance.isLessThan(order.quantityToSell)) {
             neoToSend = toBigNumber(order.quantityToSell).minus(neoHolding.contractBalance);
 
             const toDepositTruncated = new BigNumber(neoToSend.toFixed(0));
@@ -197,7 +197,7 @@ export default {
 
         if (order.assetIdToSell === assets.GAS) {
           const gasHolding = neo.getHolding(assets.GAS);
-          if (gasHolding.contractBalance < order.quantityToSell) {
+          if (gasHolding.contractBalance.isLessThan(order.quantityToSell)) {
             gasToSend = toBigNumber(order.quantityToSell).minus(gasHolding.contractBalance);
             if (gasToSend.isGreaterThan(gasHolding.balance)) {
               reject('Insufficient GAS.');
@@ -292,7 +292,6 @@ export default {
 
           const senderScriptHash = wallet.getScriptHashFromAddress(currentWallet.address);
           configResponse.tx.addAttribute(TX_ATTR_USAGE_VERIFICATION, u.reverseHex(senderScriptHash).padEnd(40, '0'));
-          // NOTE: claim and compound as the manager need this:
           // configResponse.tx.addAttribute(TX_ATTR_USAGE_WITHDRAW_ADDRESS, u.reverseHex(senderScriptHash).padEnd(64, '0'));
           configResponse.tx.addAttribute(TX_ATTR_USAGE_HEIGHT,
             u.num2fixed8(currentNetwork.bestBlock != null ? currentNetwork.bestBlock.index : 0).padEnd(64, '0'));
@@ -694,7 +693,11 @@ export default {
                 alerts.success('Deposit relayed, waiting for confirmation...');
                 neo.monitorTransactionConfirmation(res.tx, true)
                   .then(() => {
-                    neo.applyTxToAddressSystemAssetBalance(currentWallet.address, res.tx, true);
+                    if (assetId !== assets.NEO && assetId !== assets.GAS) {
+                      // Can't apply for NEO or GAS deposits, because it won't distinguish the new UTXO change from the
+                      // amounts sent.
+                      neo.applyTxToAddressSystemAssetBalance(currentWallet.address, res.tx, true);
+                    }
                     resolve(res.tx);
                   })
                   .catch((e) => {
@@ -2216,12 +2219,13 @@ export default {
         // Valid until amount gets converted to BigInteger so the block number needs to be converted to smallest units.
         const blockIndex = currentNetwork.bestBlock.index;
         const validUntilValue = (blockIndex + 20) * 0.00000001;
+        const walletScriptHash = wallet.getScriptHashFromAddress(currentWallet.address);
         const senderScriptHash = wallet.getScriptHashFromAddress(overrideAddress || currentWallet.address);
 
         configResponse.sendingFromSmartContract = true;
         api.createTx(configResponse, 'invocation')
           .then((configResponse) => {
-            const verificationScriptHash = u.reverseHex(wallet.getScriptHashFromAddress(currentWallet.address));
+            const verificationScriptHash = u.reverseHex(walletScriptHash);
             configResponse.tx.addAttribute(TX_ATTR_USAGE_SIGNATURE_REQUEST_TYPE, SIGNATUREREQUESTTYPE_WITHDRAWSTEP_WITHDRAW.padEnd(64, '0'));
             configResponse.tx.addAttribute(TX_ATTR_USAGE_WITHDRAW_ADDRESS, u.reverseHex(senderScriptHash).padEnd(64, '0'));
             configResponse.tx.addAttribute(TX_ATTR_USAGE_WITHDRAW_NEP5_ASSET_ID, u.reverseHex(assetId).padEnd(64, '0'));
@@ -2244,7 +2248,7 @@ export default {
                 verificationScript: '',
               };
               // We need to order this for the VM.
-              if (parseInt(currentNetwork.dex_hash, 16) > parseInt(senderScriptHash, 16)) {
+              if (parseInt(currentNetwork.dex_hash, 16) > parseInt(walletScriptHash, 16)) {
                 configResponse.tx.scripts.push(attachInvokedContract);
               } else {
                 configResponse.tx.scripts.unshift(attachInvokedContract);
