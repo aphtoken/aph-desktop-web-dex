@@ -1197,7 +1197,9 @@ export default {
       // limit order
       let depositMakerQuantity = false;
 
-      if ((sellAssetHolding.canPull === false || order.assetIdToSell === '3a4acd3647086e7c44398aac0349802e6a171129') && order.quantity.isGreaterThan(0)) {
+      if ((sellAssetHolding.canPull === false || order.assetIdToSell === '3a4acd3647086e7c44398aac0349802e6a171129'
+          || order.assetIdToSell === 'bb3b54ab244b3658155f2db4429fc38ac4cef625'
+          || order.assetIdToSell === 'c9c0fc5a2b66a29d6b14601e752e6e1a445e088d') && order.quantity.isGreaterThan(0)) {
         // this is an MCT based token that can not be pulled from our DEX contract, have to send a deposit first
         depositMakerQuantity = true;
       } else if (order.offersToTake.length > 0 && order.quantityToMake.isGreaterThan(0)) {
@@ -2442,6 +2444,7 @@ export default {
       }
 
       const senderScriptHash = wallet.getScriptHashFromAddress(currentWallet.address);
+      let claims;
 
       api.getClaimsFrom({
         net: network.getSelectedNetwork().net,
@@ -2462,9 +2465,9 @@ export default {
               });
             })
             .then((configResponse) => {
-              configResponse.claims = claimsResponse.claims;
+              claims = claimsResponse.claims;
               console.log(`Taking 20 claims of ${claimsResponse.claims.claims.length} @ block ${currentNetwork.bestBlock.index}`);
-              configResponse.claims = configResponse.claims.slice(0, 20);
+              configResponse.claims = claims.slice(0, 20);
               return api.createTx(configResponse, 'claim');
             })
             .then((configResponse) => {
@@ -2502,6 +2505,8 @@ export default {
               resolve({
                 success: configResponse.response.result,
                 tx: configResponse.tx,
+                totalClaims: claims,
+                claims: configResponse.claims,
               });
             })
             .catch((e) => {
