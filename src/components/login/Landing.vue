@@ -69,7 +69,7 @@ export default {
   .support-links {
     margin-top: 30px;
     text-align: center;
-    line-height: 16px;
+    line-height: 1.6rem;
   }
 }
 </style>
