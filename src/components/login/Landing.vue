@@ -67,9 +67,9 @@ export default {
   }
 
   .support-links {
-    margin-top: 30px;
+    margin-top: toRem(30px);
     text-align: center;
-    line-height: 1.6rem;
+    line-height: toRem(23px);
   }
 }
 </style>
