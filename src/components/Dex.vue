@@ -40,6 +40,7 @@ import { mapGetters } from 'vuex';
 import DexDemoConfirmation from './modals/DexDemoConfirmation';
 import DexOutOfDate from './modals/DexOutOfDate';
 import assets from '../services/assets';
+import storage from '../services/storage';
 
 export default {
   beforeDestroy() {
@@ -66,7 +67,7 @@ export default {
     },
 
     shouldShowDemoConfirmation() {
-      return (!this.acceptDexDemoVersion && !this.isOutOfDate) || this.showLearnMore;
+      return (!this.acceptDexDemoVersion && !storage.get('dexInfoAccepted') && !this.isOutOfDate) || this.showLearnMore;
     },
 
     shouldShowOutOfDate() {

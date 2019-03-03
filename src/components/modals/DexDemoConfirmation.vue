@@ -19,6 +19,7 @@
 
 <script>
 import ModalWrapper from './ModalWrapper';
+import storage from '../../services/storage';
 export default {
   components: {
     ModalWrapper,
@@ -28,6 +29,8 @@ export default {
     accept() {
       this.$store.commit('setAcceptDexDemoVersion', true);
       this.$store.commit('setShowLearnMore', false);
+      // Persist this on desktop web due to many refreshes and emptied state
+      storage.set('dexInfoAccepted', true);
     },
   },
 

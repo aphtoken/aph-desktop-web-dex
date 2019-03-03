@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import { requests } from '../constants';
 import { alerts, neo, dex } from '../services';
+import storage from '../services/storage';
 
 export {
   addToOrderHistory,
@@ -132,6 +133,8 @@ function handleLogout(state) {
   state.menuToggleable = false;
   state.orderHistory = [];
   neo.fetchNEP5Tokens();
+  storage.delete('dexInfoAccepted');
+  storage.delete('commitInfoAccepted');
 }
 
 function handleNetworkChange(state) {

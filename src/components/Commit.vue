@@ -105,7 +105,7 @@
         </button>
       </div>
     </div>
-    <commit-info v-if="!$store.state.acceptCommitInfo"></commit-info>
+    <commit-info v-if="shouldShowInfoModal"></commit-info>
     <commit-modal v-if="$store.state.commitModalModel"
       :onConfirmed="commitConfirmed" :onCancel="hideCommitModal"></commit-modal>
     <claim-modal v-if="$store.state.claimModalModel"
@@ -119,6 +119,7 @@ import { mapGetters } from 'vuex';
 import CommitInfo from './modals/CommitInfo';
 import CommitModal from './modals/CommitModal';
 import ClaimModal from './modals/ClaimModal';
+import storage from '../services/storage';
 
 let loadCommitStateIntervalId;
 export default {
@@ -157,6 +158,9 @@ export default {
     ...mapGetters([
       'currentNetwork',
     ]),
+    shouldShowInfoModal() {
+      return (!this.$store.state.acceptCommitInfo && !storage.get('commitInfoAccepted'));
+    },
     shouldDisableCommitButton() {
       return this.$store.state.commitState.quantityCommitted > 0 || this.$store.state.commitChangeInProgress;
     },
