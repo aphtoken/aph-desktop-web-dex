@@ -2888,4 +2888,19 @@ export default {
     // console.log(`${JSON.stringify(res)}`);
     return res.data.kycStatus;
   },
+
+  getMarketDataFromName(marketName) {
+    let marketData = false;
+    store.state.markets.forEach((market) => {
+      if (market.marketName === marketName) {
+        marketData = market;
+      }
+    });
+    return marketData;
+  },
+
+  getDefaultRoute() {
+    const defaultSettings = this.$constants.defaultSettings;
+    return defaultSettings.DEX_BASE_ROUTE + defaultSettings.DEX_MARKET_PAIR;
+  },
 };

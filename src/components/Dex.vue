@@ -106,7 +106,12 @@ export default {
       this.$store.dispatch('fetchMarkets', {
         done: () => {
           if (!this.$store.state.currentMarket) {
-            this.$store.commit('setCurrentMarket', this.$store.state.markets[0]);
+            const marketData = this.$services.dex.getMarketDataFromName(this.$route.params.market);
+            if (marketData === false) {
+              this.$router.push(this.$services.dex.getDefaultRoute());
+              return;
+            }
+            this.$store.commit('setCurrentMarket', marketData);
           }
         },
       });
@@ -193,6 +198,12 @@ export default {
     });
 
     services.neo.promptGASFractureIfNecessary();
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    const marketData = this.$services.dex.getMarketDataFromName(to.params.market);
+    this.$store.commit('setCurrentMarket', marketData);
+    next();
   },
 };
 </script>
