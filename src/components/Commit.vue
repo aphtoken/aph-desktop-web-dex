@@ -203,6 +203,7 @@ export default {
 
   methods: {
     showInfo() {
+      storage.delete('commitInfoAccepted');
       this.$store.commit('setAcceptCommitInfo', false);
     },
     showCommitModal() {
