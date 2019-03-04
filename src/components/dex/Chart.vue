@@ -526,6 +526,8 @@ export default {
 
     this.setDexChartStateFromStorage();
 
+    // TODO: Change this from polling every few seconds to responding to when the user actually
+    // makes a change to the state (ie. using a TradingView method like onIntervalChange)
     this.saveChartStateInterval = setInterval(() => {
       this.saveChartState();
     }, this.$constants.timeouts.DEX_SAVE_CHART_STATE);
