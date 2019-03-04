@@ -35,6 +35,7 @@ export {
   setCurrentNetwork,
   setCurrentWallet,
   setDepositWithdrawModalModel,
+  setDexChartState,
   setFractureGasModalModel,
   setGasClaim,
   setGasFracture,
@@ -132,6 +133,7 @@ function handleLogout(state) {
   state.menuToggleable = false;
   state.orderHistory = [];
   neo.fetchNEP5Tokens();
+  state.dexChartState = false;
   storage.delete('dexChartState');
 }
 
@@ -455,6 +457,13 @@ function setSystemWithdrawMergeState(state, value) {
 
 function setOrderHistory(state, orders) {
   state.orderHistory = orders;
+}
+
+function setDexChartState(state, value) {
+  if (JSON.stringify(state.dexChartState) !== JSON.stringify(value)) {
+    storage.set('dexChartState', value);
+  }
+  state.dexChartState = value;
 }
 
 function setFractureGasModalModel(state, model) {

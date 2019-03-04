@@ -30,6 +30,7 @@ const state = {
   currentNetwork: null,
   currentWallet: null,
   depositWithdrawModalModel: null,
+  dexChartState: false,
   fractureGasModalModel: null,
   gasClaim: null,
   gasFracture: null,

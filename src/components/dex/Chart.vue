@@ -465,21 +465,27 @@ export default {
     saveChartState(){
       this.tradingView.onChartReady(() => {
         this.tradingView.save((state) => {
-          storage.set('dexChartState', state);
+          this.$store.commit('setDexChartState', state);
         });
       });
     },
 
     loadSavedChartState(){
-      const state = storage.get('dexChartState');
-      if(!state){
+      if(!this.$store.state.dexChartState){
         return;
       }
 
       this.tradingView.onChartReady(() => {
-        this.tradingView.load(state);
+        this.tradingView.load(this.$store.state.dexChartState);
       });
-    }
+    },
+
+    setDexChartStateFromStorage() {
+      const state = storage.get('dexChartState');
+      if (state) {
+        this.$store.commit('setDexChartState', state);
+      }
+    },
   },
 
   mounted() {
@@ -518,10 +524,11 @@ export default {
       this.loadChart();
     });
 
+    this.setDexChartStateFromStorage();
+
     this.saveChartStateInterval = setInterval(() => {
       this.saveChartState();
     }, this.$constants.timeouts.DEX_SAVE_CHART_STATE);
-
   },
 };
 </script>
