@@ -58,6 +58,7 @@ const defaultSettings = {
   STYLE: 'Day',
   DEX_BASE_ROUTE: '/app/trade/',
   DEX_MARKET_PAIR: 'NEO-APH',
+  LANDING_ROUTE: '/app/trade/NEO-APH',
 };
 
 const formats = {
@@ -65,7 +66,7 @@ const formats = {
   DATE_SHORT: 'DD-MM',
   FRACTIONAL_NUMBER: '[.]0[00000000]',
   MONEY: '$0,0.00',
-  TIME: 'hh:mm:ss',
+  TIME: 'HH:mm:ss',
   WEEKDAY_AND_TIME: 'dd H:ss',
   WHOLE_NUMBER: '0,0',
   WHOLE_NUMBER_NO_COMMAS: '0[.]0[00000000]',

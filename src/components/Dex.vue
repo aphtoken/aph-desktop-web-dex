@@ -80,6 +80,7 @@ export default {
   },
 
   created() {
+    this.$store.commit('setMenuToggleable', true);
     this.setConnected();
     this.connectionStatusInterval = setInterval(() => {
       this.setConnected();

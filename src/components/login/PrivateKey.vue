@@ -32,7 +32,7 @@ export default {
       this.$store.dispatch('openPrivateKey', {
         wif: this.wif,
         done: () => {
-          this.$router.push('/app/dashboard');
+          this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
         },
       });
     },
