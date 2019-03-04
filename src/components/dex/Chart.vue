@@ -72,12 +72,14 @@
 
 <script>
 import { BigNumber } from 'bignumber.js';
+import storage from '../../services/storage';
 
 export default {
   beforeDestroy() {
     this.storeUnwatch();
     this.tradeHistoryUnwatch();
     clearInterval(this.barsSubscription);
+    clearInterval(this.saveChartStateInterval);
   },
 
   computed: {
@@ -234,6 +236,7 @@ export default {
       tradingView: null,
       tradeHistoryUnwatch: null,
       storeUnwatch: null,
+      saveChartStateInterval: null,
     };
   },
 
@@ -430,6 +433,7 @@ export default {
           }, 1000);
         }
         this.tradingView = new TradingView.widget(settings);
+        this.loadSavedChartState();
 
       } catch (e) {
         console.log(e);
@@ -457,6 +461,25 @@ export default {
         this.removeChart();
       }
     },
+
+    saveChartState(){
+      this.tradingView.onChartReady(() => {
+        this.tradingView.save((state) => {
+          storage.set('dexChartState', state);
+        });
+      });
+    },
+
+    loadSavedChartState(){
+      const state = storage.get('dexChartState');
+      if(!state){
+        return;
+      }
+
+      this.tradingView.onChartReady(() => {
+        this.tradingView.load(state);
+      });
+    }
   },
 
   mounted() {
@@ -494,6 +517,11 @@ export default {
     loadChartPromise.then(() => {
       this.loadChart();
     });
+
+    this.saveChartStateInterval = setInterval(() => {
+      this.saveChartState();
+    }, 5000);
+
   },
 };
 </script>

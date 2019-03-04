@@ -3,7 +3,7 @@ import Vue from 'vue';
 import moment from 'moment';
 
 import { requests } from '../constants';
-import { alerts, neo, dex } from '../services';
+import { alerts, neo, dex, storage } from '../services';
 
 export {
   addToOrderHistory,
@@ -132,6 +132,7 @@ function handleLogout(state) {
   state.menuToggleable = false;
   state.orderHistory = [];
   neo.fetchNEP5Tokens();
+  storage.delete('dexChartState');
 }
 
 function handleNetworkChange(state) {
