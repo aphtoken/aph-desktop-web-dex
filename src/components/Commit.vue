@@ -105,7 +105,7 @@
         </button>
       </div>
     </div>
-    <commit-info v-if="shouldShowInfoModal"></commit-info>
+    <commit-info v-if="!$store.state.acceptCommitInfo"></commit-info>
     <commit-modal v-if="$store.state.commitModalModel"
       :onConfirmed="commitConfirmed" :onCancel="hideCommitModal"></commit-modal>
     <claim-modal v-if="$store.state.claimModalModel"
@@ -141,6 +141,8 @@ export default {
     loadCommitStateIntervalId = setInterval(() => {
       this.$store.dispatch('fetchCommitState');
     }, this.$constants.intervals.HOLDINGS_POLLING);
+
+    this.setInfoAcceptedFromStorage();
   },
 
   data() {
@@ -158,9 +160,6 @@ export default {
     ...mapGetters([
       'currentNetwork',
     ]),
-    shouldShowInfoModal() {
-      return (!this.$store.state.acceptCommitInfo && !storage.get('commitInfoAccepted'));
-    },
     shouldDisableCommitButton() {
       return this.$store.state.commitState.quantityCommitted > 0 || this.$store.state.commitChangeInProgress;
     },
@@ -203,7 +202,6 @@ export default {
 
   methods: {
     showInfo() {
-      storage.delete('commitInfoAccepted');
       this.$store.commit('setAcceptCommitInfo', false);
     },
     showCommitModal() {
@@ -245,6 +243,12 @@ export default {
 
     compound() {
       this.$services.dex.compoundAPH();
+    },
+
+    setInfoAcceptedFromStorage() {
+      if (storage.get('commitInfoAccepted') === true) {
+        this.$store.commit('setAcceptCommitInfo', true);
+      }
     },
   },
 };

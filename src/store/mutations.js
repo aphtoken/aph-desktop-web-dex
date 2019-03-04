@@ -182,10 +182,24 @@ function resetRequests(state) {
 }
 
 function setAcceptCommitInfo(state, value) {
+  if (value === false && storage.get('commitInfoAccepted')) {
+    storage.delete('commitInfoAccepted');
+  }
+
+  if (value === true) {
+    storage.set('commitInfoAccepted', true);
+  }
   state.acceptCommitInfo = value;
 }
 
 function setAcceptDexDemoVersion(state, value) {
+  if (value === false && storage.get('dexInfoAccepted')) {
+    storage.delete('dexInfoAccepted');
+  }
+
+  if (value === true) {
+    storage.set('dexInfoAccepted', true);
+  }
   Vue.set(state.acceptDexDemoVersion, state.currentNetwork.net, value);
 }
 

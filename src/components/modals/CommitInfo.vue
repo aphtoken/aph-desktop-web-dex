@@ -20,7 +20,6 @@
 
 <script>
 import ModalWrapper from './ModalWrapper';
-import storage from '../../services/storage';
 export default {
   components: {
     ModalWrapper,
@@ -29,8 +28,6 @@ export default {
   methods: {
     accept() {
       this.$store.commit('setAcceptCommitInfo', true);
-      // Persist this on desktop web due to many refreshes and emptied state
-      storage.set('commitInfoAccepted', true);
     },
   },
 };
