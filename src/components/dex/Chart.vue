@@ -519,8 +519,9 @@ export default {
     });
 
     this.saveChartStateInterval = setInterval(() => {
+      console.log('saving chart');
       this.saveChartState();
-    }, 5000);
+    }, this.$constants.timeouts.DEX_SAVE_CHART_STATE);
 
   },
 };
