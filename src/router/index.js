@@ -189,7 +189,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/app/dashboard',
+      redirect: '/app/dex',
     },
   ],
 });

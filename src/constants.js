@@ -56,6 +56,7 @@ const database = {
 const defaultSettings = {
   CURRENCY: 'USD',
   STYLE: 'Day',
+  LANDING_ROUTE: '/app/dex',
 };
 
 const formats = {

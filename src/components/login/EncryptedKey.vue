@@ -35,7 +35,7 @@ export default {
         encryptedKey: this.encryptedKey,
         passphrase: this.passphrase,
         done: () => {
-          this.$router.push('/app/dashboard');
+          this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
         },
       });
     },
