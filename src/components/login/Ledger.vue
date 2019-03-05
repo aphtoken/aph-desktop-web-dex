@@ -78,7 +78,7 @@ export default {
 
       await this.$store.dispatch('openLedger', {
         done: () => {
-          this.$router.push('/app/dashboard');
+          this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
         },
         failed: () => {
           this.connected = false;

@@ -27,7 +27,7 @@ export default {
 
   mounted() {
     if (this.$services.wallets.getCurrentWallet()) {
-      this.$router.push('/app/dashboard');
+      this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
     }
   },
 };
