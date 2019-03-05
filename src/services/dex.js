@@ -2890,17 +2890,7 @@ export default {
   },
 
   getMarketDataFromName(marketName) {
-    let marketData = false;
-    store.state.markets.forEach((market) => {
-      if (market.marketName === marketName) {
-        marketData = market;
-      }
-    });
-    return marketData;
-  },
-
-  getDefaultRoute() {
-    const defaultSettings = this.$constants.defaultSettings;
-    return defaultSettings.DEX_BASE_ROUTE + defaultSettings.DEX_MARKET_PAIR;
+    const marketData = _.find(store.state.markets, { marketName });
+    return marketData || false;
   },
 };

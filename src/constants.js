@@ -57,7 +57,7 @@ const defaultSettings = {
   CURRENCY: 'USD',
   STYLE: 'Day',
   DEX_BASE_ROUTE: '/app/trade/',
-  DEX_MARKET_PAIR: 'NEO-APH',
+  LANDING_ROUTE: '/app/trade/NEO-APH',
 };
 
 const formats = {

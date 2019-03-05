@@ -107,8 +107,8 @@ export default {
         done: () => {
           if (!this.$store.state.currentMarket) {
             const marketData = this.$services.dex.getMarketDataFromName(this.$route.params.market);
-            if (marketData === false) {
-              this.$router.push(this.$services.dex.getDefaultRoute());
+            if (!marketData) {
+              this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
               return;
             }
             this.$store.commit('setCurrentMarket', marketData);
@@ -202,6 +202,10 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     const marketData = this.$services.dex.getMarketDataFromName(to.params.market);
+    if (!marketData) {
+      this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
+      return;
+    }
     this.$store.commit('setCurrentMarket', marketData);
     next();
   },
