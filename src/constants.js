@@ -56,6 +56,7 @@ const database = {
 const defaultSettings = {
   CURRENCY: 'USD',
   STYLE: 'Day',
+  LANDING_ROUTE: '/app/dex',
 };
 
 const formats = {
@@ -63,7 +64,7 @@ const formats = {
   DATE_SHORT: 'DD-MM',
   FRACTIONAL_NUMBER: '[.]0[00000000]',
   MONEY: '$0,0.00',
-  TIME: 'hh:mm:ss',
+  TIME: 'HH:mm:ss',
   WEEKDAY_AND_TIME: 'dd H:ss',
   WHOLE_NUMBER: '0,0',
   WHOLE_NUMBER_NO_COMMAS: '0[.]0[00000000]',
@@ -103,6 +104,7 @@ const requests = {
 const timeouts = {
   BALANCE_PERSIST_FOR: 5 * 60 * 1000,
   CANCEL_ORDER: 5 * 60 * 1000,
+  DEX_SAVE_CHART_STATE: 5000,
   MONITOR_TRANSACTIONS: 10 * 60 * 1000,
   NEO_API_CALL: 500,
   RENDER_CHART: 100,

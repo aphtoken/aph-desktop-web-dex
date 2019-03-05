@@ -3,8 +3,7 @@ import Vue from 'vue';
 import moment from 'moment';
 
 import { requests } from '../constants';
-import { alerts, neo, dex } from '../services';
-import storage from '../services/storage';
+import { alerts, neo, dex, storage } from '../services';
 
 export {
   addToOrderHistory,
@@ -36,6 +35,7 @@ export {
   setCurrentNetwork,
   setCurrentWallet,
   setDepositWithdrawModalModel,
+  setDexChartState,
   setFractureGasModalModel,
   setGasClaim,
   setGasFracture,
@@ -132,9 +132,11 @@ function handleLogout(state) {
   state.currentMarket = null;
   state.menuToggleable = false;
   state.orderHistory = [];
+  state.dexChartState = false;
   neo.fetchNEP5Tokens();
   storage.delete('dexInfoAccepted');
   storage.delete('commitInfoAccepted');
+  storage.delete('dexChartState');
 }
 
 function handleNetworkChange(state) {
@@ -467,6 +469,13 @@ function setSystemWithdrawMergeState(state, value) {
 
 function setOrderHistory(state, orders) {
   state.orderHistory = orders;
+}
+
+function setDexChartState(state, value) {
+  if (JSON.stringify(state.dexChartState) !== JSON.stringify(value)) {
+    storage.set('dexChartState', value);
+  }
+  state.dexChartState = value;
 }
 
 function setFractureGasModalModel(state, model) {
