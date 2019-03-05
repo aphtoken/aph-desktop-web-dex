@@ -72,12 +72,14 @@
 
 <script>
 import { BigNumber } from 'bignumber.js';
+import storage from '../../services/storage';
 
 export default {
   beforeDestroy() {
     this.storeUnwatch();
     this.tradeHistoryUnwatch();
     clearInterval(this.barsSubscription);
+    clearInterval(this.saveChartStateInterval);
   },
 
   computed: {
@@ -234,6 +236,7 @@ export default {
       tradingView: null,
       tradeHistoryUnwatch: null,
       storeUnwatch: null,
+      saveChartStateInterval: null,
     };
   },
 
@@ -430,6 +433,7 @@ export default {
           }, 1000);
         }
         this.tradingView = new TradingView.widget(settings);
+        this.loadSavedChartState();
 
       } catch (e) {
         console.log(e);
@@ -455,6 +459,31 @@ export default {
         this.loadChart();
       } else {
         this.removeChart();
+      }
+    },
+
+    saveChartState(){
+      this.tradingView.onChartReady(() => {
+        this.tradingView.save((state) => {
+          this.$store.commit('setDexChartState', state);
+        });
+      });
+    },
+
+    loadSavedChartState(){
+      if(!this.$store.state.dexChartState){
+        return;
+      }
+
+      this.tradingView.onChartReady(() => {
+        this.tradingView.load(this.$store.state.dexChartState);
+      });
+    },
+
+    setDexChartStateFromStorage() {
+      const state = storage.get('dexChartState');
+      if (state) {
+        this.$store.commit('setDexChartState', state);
       }
     },
   },
@@ -494,6 +523,14 @@ export default {
     loadChartPromise.then(() => {
       this.loadChart();
     });
+
+    this.setDexChartStateFromStorage();
+
+    // TODO: Change this from polling every few seconds to responding to when the user actually
+    // makes a change to the state (ie. using a TradingView method like onIntervalChange)
+    this.saveChartStateInterval = setInterval(() => {
+      this.saveChartState();
+    }, this.$constants.timeouts.DEX_SAVE_CHART_STATE);
   },
 };
 </script>
