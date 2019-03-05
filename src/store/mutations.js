@@ -182,22 +182,18 @@ function resetRequests(state) {
 }
 
 function setAcceptCommitInfo(state, value) {
-  if (value === false && storage.get('commitInfoAccepted')) {
+  if (!value && state.acceptCommitInfo) {
     storage.delete('commitInfoAccepted');
-  }
-
-  if (value === true) {
+  } else if (value && !state.acceptCommitInfo) {
     storage.set('commitInfoAccepted', true);
   }
   state.acceptCommitInfo = value;
 }
 
 function setAcceptDexDemoVersion(state, value) {
-  if (value === false && storage.get('dexInfoAccepted')) {
+  if (!value && state.acceptDexDemoVersion[state.currentNetwork.net]) {
     storage.delete('dexInfoAccepted');
-  }
-
-  if (value === true) {
+  } else if (value && !state.acceptDexDemoVersion[state.currentNetwork.net]) {
     storage.set('dexInfoAccepted', true);
   }
   Vue.set(state.acceptDexDemoVersion, state.currentNetwork.net, value);
