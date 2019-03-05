@@ -40,6 +40,7 @@ import { mapGetters } from 'vuex';
 import DexDemoConfirmation from './modals/DexDemoConfirmation';
 import DexOutOfDate from './modals/DexOutOfDate';
 import assets from '../services/assets';
+import storage from '../services/storage';
 
 export default {
   beforeDestroy() {
@@ -140,6 +141,12 @@ export default {
 
       this.connected = true;
     },
+
+    setInfoAcceptedFromStorage() {
+      if (storage.get('dexInfoAccepted') === true) {
+        this.$store.commit('setAcceptDexDemoVersion', true);
+      }
+    },
   },
 
   mounted() {
@@ -194,6 +201,8 @@ export default {
     });
 
     services.neo.promptGASFractureIfNecessary();
+
+    this.setInfoAcceptedFromStorage();
   },
 };
 </script>

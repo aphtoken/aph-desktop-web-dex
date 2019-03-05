@@ -132,8 +132,10 @@ function handleLogout(state) {
   state.currentMarket = null;
   state.menuToggleable = false;
   state.orderHistory = [];
-  neo.fetchNEP5Tokens();
   state.dexChartState = false;
+  neo.fetchNEP5Tokens();
+  storage.delete('dexInfoAccepted');
+  storage.delete('commitInfoAccepted');
   storage.delete('dexChartState');
 }
 
@@ -182,10 +184,20 @@ function resetRequests(state) {
 }
 
 function setAcceptCommitInfo(state, value) {
+  if (!value && state.acceptCommitInfo) {
+    storage.delete('commitInfoAccepted');
+  } else if (value && !state.acceptCommitInfo) {
+    storage.set('commitInfoAccepted', true);
+  }
   state.acceptCommitInfo = value;
 }
 
 function setAcceptDexDemoVersion(state, value) {
+  if (!value && state.acceptDexDemoVersion[state.currentNetwork.net]) {
+    storage.delete('dexInfoAccepted');
+  } else if (value && !state.acceptDexDemoVersion[state.currentNetwork.net]) {
+    storage.set('dexInfoAccepted', true);
+  }
   Vue.set(state.acceptDexDemoVersion, state.currentNetwork.net, value);
 }
 

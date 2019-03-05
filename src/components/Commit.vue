@@ -119,6 +119,7 @@ import { mapGetters } from 'vuex';
 import CommitInfo from './modals/CommitInfo';
 import CommitModal from './modals/CommitModal';
 import ClaimModal from './modals/ClaimModal';
+import storage from '../services/storage';
 
 let loadCommitStateIntervalId;
 export default {
@@ -140,6 +141,8 @@ export default {
     loadCommitStateIntervalId = setInterval(() => {
       this.$store.dispatch('fetchCommitState');
     }, this.$constants.intervals.HOLDINGS_POLLING);
+
+    this.setInfoAcceptedFromStorage();
   },
 
   data() {
@@ -240,6 +243,12 @@ export default {
 
     compound() {
       this.$services.dex.compoundAPH();
+    },
+
+    setInfoAcceptedFromStorage() {
+      if (storage.get('commitInfoAccepted') === true) {
+        this.$store.commit('setAcceptCommitInfo', true);
+      }
     },
   },
 };

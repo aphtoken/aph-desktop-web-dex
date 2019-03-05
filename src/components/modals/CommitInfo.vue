@@ -40,7 +40,7 @@ export default {
     width: toRem(700px);
     overflow: visible;
   }
-  
+
   .body {
     display: block;
     padding: $space-xl;
@@ -56,15 +56,15 @@ export default {
       line-height: $copy-line-height;
       margin: 0;
     }
-    
-      
-        
+
+
+
     .icons {
       position: relative;
       margin: toRem(-80px) auto toRem(80px) auto;
       width: toRem(40px);
-      height: toRem(40px);     
-          
+      height: toRem(40px);
+
       .aph-icon {
         position: absolute;
         width: toRem(40px);
@@ -75,14 +75,14 @@ export default {
             position: relative;
             margin-top: 10%;
           }
-            
+
           &.commit {
             margin: toRem(5px) 0 0 0;
             .fill {
               fill: white;
             }
           }
-            
+
           &.hex {
             margin: toRem(-25px);
             .fill {
@@ -91,7 +91,7 @@ export default {
           }
         }
       }
-    }  
+    }
   }
 
   .footer {
