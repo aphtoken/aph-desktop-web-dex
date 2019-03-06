@@ -14,6 +14,10 @@
   </section>
 </template>
 <script>
+import { defaultSettings } from '../constants';
+import { store } from '../store';
+import router from '../router';
+
 export default {
   beforeDestroy() {
     this.$store.commit('resetRequests');
@@ -29,6 +33,15 @@ export default {
     if (this.$services.wallets.getCurrentWallet()) {
       this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
     }
+  },
+
+  beforeRouteEnter(to, from, next) {
+    if (Object.prototype.hasOwnProperty.call(to.query, 'ref')) {
+      store.commit('setLoginRef', to.query.ref);
+      router.replace(defaultSettings.LOGIN_ROUTE);
+      return;
+    }
+    next();
   },
 };
 </script>

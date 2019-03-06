@@ -34,9 +34,7 @@ export default {
       this.$store.dispatch('openEncryptedKey', {
         encryptedKey: this.encryptedKey,
         passphrase: this.passphrase,
-        done: () => {
-          this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
-        },
+        done: this.$services.login.success,
       });
     },
   },

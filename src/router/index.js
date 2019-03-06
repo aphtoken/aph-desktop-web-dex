@@ -77,7 +77,7 @@ export default new Router({
           return next();
         }
 
-        return next('/login');
+        return next(`/login?ref=${to.path}`);
       },
       children: [
         {
