@@ -44,6 +44,7 @@ export {
   setLastReceivedBlock,
   setLastSuccessfulRequest,
   setLatestVersion,
+  setLoginRef,
   setMarkets,
   setMenuCollapsed,
   setMenuToggleable,
@@ -181,6 +182,10 @@ function putBlockDetails(state, blockDetails) {
 
 function resetRequests(state) {
   state.requests = {};
+}
+
+function setLoginRef(state, value) {
+  state.loginRef = value;
 }
 
 function setAcceptCommitInfo(state, value) {

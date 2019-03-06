@@ -57,6 +57,7 @@ const defaultSettings = {
   CURRENCY: 'USD',
   STYLE: 'Day',
   LANDING_ROUTE: '/app/dex',
+  LOGIN_ROUTE: '/login',
 };
 
 const formats = {

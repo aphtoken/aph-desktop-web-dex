@@ -39,6 +39,7 @@ const state = {
   lastReceivedBlock: null,
   lastSuccessfulRequest: null,
   latestVersion: null,
+  loginRef: false,
   markets: [],
   menuToggleable: false,
   menuCollapsed: true,

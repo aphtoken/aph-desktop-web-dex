@@ -1,6 +1,6 @@
 <template>
   <section id="login--saved-wallet">
-    <login-form-wrapper identifier="openPrivateKey" :on-submit="login">
+    <login-form-wrapper identifier="openPrivateKey">
       <aph-input :hasError="$isFailed('openPrivateKey')" v-model="wif" :placeholder="$t('enterYourPrivateKeyWIF')" type="password"></aph-input>
       <button class="login" @click="login" :disabled="shouldDisableLoginButton">{{$t('login')}}</button>
     </login-form-wrapper>
@@ -31,9 +31,7 @@ export default {
     login() {
       this.$store.dispatch('openPrivateKey', {
         wif: this.wif,
-        done: () => {
-          this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
-        },
+        done: this.$services.login.success,
       });
     },
   },

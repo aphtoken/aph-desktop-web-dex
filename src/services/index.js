@@ -3,6 +3,7 @@ import assets from './assets';
 import contacts from './contacts';
 import formatting from './formatting';
 import ledger from './ledger';
+import login from './login';
 import neo from './neo';
 import network from './network';
 import settings from './settings';
@@ -18,6 +19,7 @@ export {
   dex,
   formatting,
   ledger,
+  login,
   neo,
   network,
   settings,
