@@ -121,7 +121,7 @@ export default new Router({
           component: require('@/components/Commit').default,
         },
         {
-          path: 'dex',
+          path: 'trade/:market',
           component: require('@/components/Dex').default,
           meta: {
             isMenuToggleable: true,
