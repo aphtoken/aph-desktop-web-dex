@@ -5,7 +5,7 @@
         <div class="grid--cell left-top">
           <router-view name="left-top"></router-view>
         </div>
-        <div class="grid--cell left-bottom">
+        <div v-if="isLoggedIn" class="grid--cell left-bottom">
           <router-view name="left-bottom"></router-view>
         </div>
       </div>
@@ -57,6 +57,10 @@ export default {
   },
 
   computed: {
+    isLoggedIn() {
+      return !!this.$store.state.currentWallet;
+    },
+
     isOutOfDate() {
       if (!this.$store.state.latestVersion) {
         return true;
