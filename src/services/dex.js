@@ -2888,4 +2888,9 @@ export default {
     // console.log(`${JSON.stringify(res)}`);
     return res.data.kycStatus;
   },
+
+  getMarketDataFromName(marketName) {
+    const marketData = _.find(store.state.markets, { marketName });
+    return marketData || false;
+  },
 };

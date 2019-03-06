@@ -17,7 +17,7 @@
           </span>
           <span class="label">{{ $t('dashboard') }}</span>
         </router-link>
-        <router-link to="/app/dex">
+        <router-link :to="$constants.defaultSettings.LANDING_ROUTE">
           <span class="icon">
             <aph-icon name="dex"></aph-icon>
           </span>

@@ -17,7 +17,7 @@
             <div>{{ $t('vol') }} <span class="small">{{ baseCurrency }}</span></div>
         </div>
         <div class="body">
-          <div @click="market.marketName !== $store.state.currentMarket.marketName ? selectMarket(market) : null" 
+          <div @click="market.marketName !== $store.state.currentMarket.marketName ? selectMarket(market) : null"
             :class="['row', {selected: $store.state.currentMarket && market.marketName === $store.state.currentMarket.marketName }]"
                v-for="market in filteredMarkets" :key="market.marketName">
             <div class="cell flex-horizontal">
@@ -107,7 +107,8 @@ export default {
     },
 
     selectMarket(market) {
-      this.$store.commit('setCurrentMarket', market);
+      const route = this.$constants.defaultSettings.DEX_BASE_ROUTE + market.marketName;
+      this.$router.push(route);
       this.close();
     },
   },
@@ -147,7 +148,7 @@ export default {
       white-space: nowrap;
       font-size: toRem(20px);
     }
-    
+
     .disabled {
       font-size: toRem(12px);
     }
@@ -242,7 +243,7 @@ export default {
           .cell {
             display: flex;
             font-size: toRem(16px);
-            
+
             &.disabled {
               font-size: toRem(11px);
               text-align: right;
