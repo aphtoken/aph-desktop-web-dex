@@ -90,6 +90,10 @@ import { mapGetters } from 'vuex';
 const SECONDS_BEFORE_NETWORK_ERROR = 120;
 
 export default {
+  mounted() {
+    this.handleMenuToggleableState(this.$route);
+  },
+
   computed: {
     showNetworkError() {
       if (!this.$store.state.lastReceivedBlock || !this.$store.state.lastSuccessfulRequest) {
@@ -127,16 +131,19 @@ export default {
     setCollapsed(collapsed) {
       this.$store.commit('setMenuCollapsed', collapsed);
     },
-  },
-  watch: {
-    $route(to) {
-      const isToggleable = to.matched.some(record => record.meta.isMenuToggleable);
+    handleMenuToggleableState(routeData) {
+      const isToggleable = routeData.matched.some(record => record.meta.isMenuToggleable);
 
       this.$store.commit('setMenuToggleable', isToggleable);
 
       if (isToggleable) {
         this.setCollapsed(true);
       }
+    },
+  },
+  watch: {
+    $route(to) {
+      this.handleMenuToggleableState(to);
     },
   },
 };
