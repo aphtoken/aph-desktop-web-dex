@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+import { defaultSettings } from '../constants';
 import { wallets } from '../services';
 
 Vue.use(Router);
@@ -189,7 +190,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/app/dex',
+      redirect: defaultSettings.LANDING_ROUTE,
     },
   ],
 });
