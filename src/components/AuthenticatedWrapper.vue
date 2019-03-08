@@ -133,6 +133,11 @@ export default {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 0;
+
+    * {
+      min-height: 0;
+    }
   }
 
   > #transactions-sidebar {
