@@ -172,7 +172,7 @@ export default {
     },
 
     quoteHolding() {
-      if (this.currentMarket && this.$store.state.holdings) {
+      if (this.currentMarket && this.$store.state.holdings && this.$store.state.holdings.length > 0) {
         const holding = _.find(this.$store.state.holdings, { assetId: this.currentMarket.quoteAssetId });
 
         if (holding) {
@@ -651,6 +651,8 @@ export default {
         return;
       }
 
+      this.updateActionableHolding();
+
       this.$store.commit('setDepositWithdrawModalModel', {
         // NOTE: if whitelisted, adjust assetId to test a new asset that has been whitelisted but market not yet added.
         isDeposit, holdingAssetId: this.actionableHolding.assetId,
@@ -759,6 +761,15 @@ export default {
         .catch((e) => {
           this.$services.alerts.exception(e);
         });
+    },
+
+    updateActionableHolding() {
+      if (_.has(this.actionableHolding, 'assetId')) {
+        return;
+      }
+      if (this.actionableHolding.symbol === this.quoteHolding.symbol) {
+        this.actionableHolding = this.quoteHolding;
+      }
     },
   },
 };
