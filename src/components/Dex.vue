@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="grid--column column-middle">
-        <div class="grid--cell middle-top" :class="{'full-height': !isLoggedIn}">
+        <div class="grid--cell middle-top">
           <router-view name="middle-top"></router-view>
         </div>
         <div v-if="isLoggedIn" class="grid--cell middle-bottom">
@@ -327,11 +327,7 @@ export default {
       }
 
       &.middle-top {
-        flex: none;
-
-        &.full-height {
-          flex: 1;
-        }
+        flex: 2;
       }
 
       & + .grid--cell {

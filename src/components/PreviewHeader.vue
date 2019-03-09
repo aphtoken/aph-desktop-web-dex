@@ -1,6 +1,6 @@
 <template>
   <section id="preview-header">
-    <a href="/login" class="login-to-trade-btn">Login To Trade</a>
+    <a href="/login" class="login-to-trade-btn">{{ $t('loginToTrade') }}</a>
   </section>
 </template>
 
@@ -21,9 +21,9 @@ export default {
     @extend %btn-outline;
 
     border-color: #fff;
+    height: auto;
+    padding: $space $space-lg;
     width: auto;
-    padding-left: $space-lg;
-    padding-right: $space-lg;
   }
 }
 </style>

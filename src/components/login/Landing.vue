@@ -12,6 +12,9 @@
         <p>{{ $t('createWallet') }}</p>
       </router-link>
     </div>
+    <div class="preview-link">
+      <router-link to="/app/trade">Preview the DEX</router-link>
+    </div>
     <div class="support-links">Need help? <a href="https://www.youtube.com/watch?v=E6g593LZx0Q" target="_blank">View the Tutorial</a> or<br>join our <a href="https://t.me/apheliontoken" target="_blank">Telegram</a> channel.</div>
     <!-- <router-link class="settings-btn" to="login">Settings</router-link> -->
   </section>
@@ -66,12 +69,17 @@ export default {
     }
   }
 
-  .support-links {
-    margin-top: toRem(30px);
+  .preview-link {
+    font-size: toRem(16px);
+    font-family: GilroySemibold;
+    margin-top: $space-lg;
     text-align: center;
-    line-height: toRem(23px);
+  }
+
+  .support-links {
+    margin-top: $space-lg;
+    text-align: center;
+    line-height: $copy-line-height;
   }
 }
 </style>
-
-

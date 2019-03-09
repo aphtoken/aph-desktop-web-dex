@@ -538,7 +538,11 @@ export default {
 #dex--chart {
   @extend %tile-light;
 
+  display: flex;
+  flex-direction: column;
+
   .header {
+    flex: none;
     padding: $space $space 0;
     position: relative;
 
@@ -588,6 +592,9 @@ export default {
   }
 
   .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     padding: $space;
 
     #chart-container, #depth-container {
@@ -595,7 +602,9 @@ export default {
       display: none;
 
       &.visible {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
       }
     }
 
@@ -604,7 +613,7 @@ export default {
 
       .upper {
         display: flex;
-        height: 85%;
+        flex: 1;
 
         .left-axis, .right-axis {
           width: toRem(75px);
@@ -721,7 +730,8 @@ export default {
       }
       .bottom-axis {
         display: flex;
-        height: 15%;
+        flex: none;
+        height: toRem(75px);
         padding: $space-sm toRem(75px);
 
         .bids, .asks {
