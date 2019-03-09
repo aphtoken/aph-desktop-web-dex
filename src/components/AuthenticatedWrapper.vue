@@ -1,7 +1,8 @@
 <template>
   <section id="authenticated-wrapper" :class="[$store.state.styleMode, {'show-transactions-sidebar': showTransactionsSidebar}]">
-    <sidebar></sidebar>
+    <sidebar v-if="isLoggedIn"></sidebar>
     <div @click="menuToggleable && !menuCollapsed ? $store.commit('setMenuCollapsed', true) : null" :class="{'filler': menuToggleable && !menuCollapsed}" class="content">
+      <preview-header v-if="!isLoggedIn"></preview-header>
       <portfolio-header v-if="$store.state.showPortfolioHeader"></portfolio-header>
       <router-view></router-view>
       <aph-claim-gas-modal v-if="$store.state.showClaimGasModal"></aph-claim-gas-modal>
@@ -20,9 +21,10 @@ import { mapGetters } from 'vuex';
 import AphClaimGasModal from './modals/ClaimGasModal';
 import AphFractureGasModal from './modals/FractureGasModal';
 import AphKycModal from './modals/KycModal';
-import AphWithdrawInProgressModal from './modals/WithdrawInProgressModal';
 import AphSendWithLedgerModal from './modals/SendWithLedgerModal';
+import AphWithdrawInProgressModal from './modals/WithdrawInProgressModal';
 import PortfolioHeader from './PortfolioHeader';
+import PreviewHeader from './PreviewHeader';
 import Sidebar from './Sidebar';
 import TransactionsSidebar from './TransactionsSidebar';
 
@@ -46,12 +48,17 @@ export default {
     AphKycModal,
     AphSendWithLedgerModal,
     AphWithdrawInProgressModal,
+    PreviewHeader,
     PortfolioHeader,
     Sidebar,
     TransactionsSidebar,
   },
 
   computed: {
+    isLoggedIn() {
+      return !!this.$store.state.currentWallet;
+    },
+
     ...mapGetters([
       'menuCollapsed',
       'menuToggleable',
@@ -79,23 +86,39 @@ export default {
     hideFractureGasModal() {
       this.$store.commit('setFractureGasModalModel', null);
     },
+
+    handleMountedWhenLoggedIn() {
+      this.$services.neo.fetchNEP5Tokens(() => {
+        // Fetch user assets more quickly on initial mount
+        this.$store.dispatch('fetchHoldings');
+        // Fetch any other assets that have been added to the wallet
+        this.loadHoldings();
+      });
+
+      loadTokensIntervalId = setInterval(() => {
+        this.$services.neo.fetchNEP5Tokens();
+      }, this.$constants.intervals.TOKENS_POLLING);
+
+      loadHoldingsIntervalId = setInterval(() => {
+        this.loadHoldings();
+      }, this.$constants.intervals.HOLDINGS_POLLING);
+    },
+
+    handleMountedWhenPreviewing() {
+      this.$services.neo.fetchNEP5Tokens();
+
+      loadTokensIntervalId = setInterval(() => {
+        this.$services.neo.fetchNEP5Tokens();
+      }, this.$constants.intervals.TOKENS_POLLING);
+    },
   },
 
   mounted() {
-    this.$services.neo.fetchNEP5Tokens(() => {
-      // Fetch user assets more quickly on initial mount
-      this.$store.dispatch('fetchHoldings');
-      // Fetch any other assets that have been added to the wallet
-      this.loadHoldings();
-    });
-
-    loadTokensIntervalId = setInterval(() => {
-      this.$services.neo.fetchNEP5Tokens();
-    }, this.$constants.intervals.TOKENS_POLLING);
-
-    loadHoldingsIntervalId = setInterval(() => {
-      this.loadHoldings();
-    }, this.$constants.intervals.HOLDINGS_POLLING);
+    if (this.isLoggedIn) {
+      this.handleMountedWhenLoggedIn();
+    } else {
+      this.handleMountedWhenPreviewing();
+    }
   },
 
   watch: {
@@ -146,4 +169,3 @@ export default {
   }
 }
 </style>
-

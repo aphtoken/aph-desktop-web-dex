@@ -1,6 +1,5 @@
 <template>
   <div id="app" :class="routeClass" v-cloak>
-    <div class="drag-area"></div>
     <router-view></router-view>
     <flash-message class="vue-flash-container"></flash-message>
     <div id="fixed-notifications">
@@ -93,16 +92,6 @@ export default {
   .vue-flash-container  {
     height: auto;
   }
-}
-
-.drag-area {
-  -webkit-app-region: drag;
-  background:transparent;
-  height: $space-lg !important;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
 }
 
 #fixed-notifications {

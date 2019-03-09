@@ -64,6 +64,10 @@ export default {
     return currentWallet || storage.get(CURRENT_WALLET_KEY);
   },
 
+  getCurrentWalletAddress() {
+    return _.get(this.getCurrentWallet(), 'address');
+  },
+
   getOne(label) {
     return _.find(this.getAllAsArray(), { label });
   },
