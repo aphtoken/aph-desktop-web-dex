@@ -8,6 +8,9 @@
         <div v-if="isLoggedIn" class="grid--cell left-bottom">
           <router-view name="left-bottom"></router-view>
         </div>
+        <div v-else class="grid--cell left-bottom">
+          <a href="/login" class="login-to-trade-btn">{{ $t('loginToTrade') }}</a>
+        </div>
       </div>
       <div class="grid--column column-middle">
         <div class="grid--cell middle-top">
@@ -365,6 +368,12 @@ export default {
       font-weight: GilroyMedium;
       margin-top: $space-lg;
     }
+  }
+
+  .login-to-trade-btn {
+    @extend %btn;
+
+    flex: none !important;
   }
 }
 </style>

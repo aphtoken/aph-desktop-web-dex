@@ -2,7 +2,6 @@
   <section id="authenticated-wrapper" :class="[$store.state.styleMode, {'show-transactions-sidebar': showTransactionsSidebar}]">
     <sidebar v-if="isLoggedIn"></sidebar>
     <div @click="menuToggleable && !menuCollapsed ? $store.commit('setMenuCollapsed', true) : null" :class="{'filler': menuToggleable && !menuCollapsed}" class="content">
-      <preview-header v-if="!isLoggedIn"></preview-header>
       <portfolio-header v-if="$store.state.showPortfolioHeader"></portfolio-header>
       <router-view></router-view>
       <aph-claim-gas-modal v-if="$store.state.showClaimGasModal"></aph-claim-gas-modal>
@@ -24,7 +23,6 @@ import AphKycModal from './modals/KycModal';
 import AphSendWithLedgerModal from './modals/SendWithLedgerModal';
 import AphWithdrawInProgressModal from './modals/WithdrawInProgressModal';
 import PortfolioHeader from './PortfolioHeader';
-import PreviewHeader from './PreviewHeader';
 import Sidebar from './Sidebar';
 import TransactionsSidebar from './TransactionsSidebar';
 
@@ -48,7 +46,6 @@ export default {
     AphKycModal,
     AphSendWithLedgerModal,
     AphWithdrawInProgressModal,
-    PreviewHeader,
     PortfolioHeader,
     Sidebar,
     TransactionsSidebar,
