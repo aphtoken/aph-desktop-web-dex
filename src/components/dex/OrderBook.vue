@@ -170,7 +170,7 @@ export default {
 
 <style lang="scss">
 #dex--order-book {
-  
+
 
   display: flex;
   flex-direction: column;
@@ -267,7 +267,7 @@ export default {
               &.red {
                 background-color: $red;
               }
-              
+
               &.size-total {
                 &.green {
                   background-color: $light-green;
@@ -284,6 +284,19 @@ export default {
         &.asks {
           .body {
             flex-direction: column-reverse;
+
+            /* For Firefox only */
+            @supports (-moz-appearance:none) {
+              flex-direction: column;
+              transform: scaleY(-1);
+            }
+
+            .row {
+              /* For Firefox only */
+              @supports (-moz-appearance:none) {
+                transform: scaleY(-1);
+              }
+            }
           }
         }
       }
