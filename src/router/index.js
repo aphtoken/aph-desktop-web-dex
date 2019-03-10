@@ -7,7 +7,7 @@ import { wallets } from '../services';
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/login',

@@ -9,7 +9,7 @@
           <router-view name="left-bottom"></router-view>
         </div>
         <div v-else class="grid--cell left-bottom">
-          <a href="/login" class="login-to-trade-btn">{{ $t('loginToTrade') }}</a>
+          <div @click="handleLoginToTradeClicked" class="login-to-trade-btn">{{ $t('loginToTrade') }}</div>
         </div>
       </div>
       <div class="grid--column column-middle">
@@ -40,9 +40,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { defaultSettings } from '../constants';
 import DexDemoConfirmation from './modals/DexDemoConfirmation';
 import DexOutOfDate from './modals/DexOutOfDate';
 import assets from '../services/assets';
+import router from '../router';
 import storage from '../services/storage';
 
 export default {
@@ -129,6 +131,10 @@ export default {
       this.tickerRefreshInterval = setInterval(() => {
         this.loadTickerData();
       }, this.$constants.intervals.TICKER_POLLING);
+    },
+
+    handleLoginToTradeClicked() {
+      router.replace(defaultSettings.LOGIN_ROUTE);
     },
 
     handleMountedIfLoggedIn() {
