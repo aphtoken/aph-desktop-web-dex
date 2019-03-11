@@ -9,7 +9,9 @@
           <router-view name="left-bottom"></router-view>
         </div>
         <div v-else class="grid--cell left-bottom">
-          <div @click="handleLoginToTradeClicked" class="login-to-trade-btn">{{ $t('loginToTrade') }}</div>
+          <div>
+            <div @click="handleLoginToTradeClicked" class="login-to-trade-btn">{{ $t('loginToTrade') }}</div>
+          </div>
         </div>
       </div>
       <div class="grid--column column-middle">
@@ -195,14 +197,14 @@ export default {
 
     handleMountedIfPreviewing() {
       this.$store.commit('setShowPortfolioHeader', false);
-      this.loadMarkets();
+      this.loadMarkets(this.loadMarketValuations);
       this.loadTickerData();
       this.setInfoAcceptedFromStorage();
     },
 
-    loadMarkets() {
+    loadMarkets(done = _.noop) {
       this.$store.dispatch('fetchMarkets', {
-        done: () => {
+        done: (markets) => {
           if (!this.$store.state.currentMarket) {
             const marketData = this.$services.dex.getMarketDataFromName(this.$route.params.market);
             if (!marketData) {
@@ -211,7 +213,18 @@ export default {
             }
             this.$store.commit('setCurrentMarket', marketData);
           }
+
+          done(markets);
         },
+      });
+    },
+
+    loadMarketValuations(markets) {
+      this.$store.dispatch('fetchValuations', {
+        done: (valuations) => {
+          this.$store.commit('appendValuationsToMarktsForPrevewing', valuations);
+        },
+        symbols: _.map(markets, 'quoteCurrency'),
       });
     },
 

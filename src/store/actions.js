@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import moment from 'moment';
 
-import { alerts, assets, dex, neo, network, wallets, ledger } from '../services';
+import { alerts, assets, dex, neo, network, wallets, ledger, valuation } from '../services';
 import { timeouts } from '../constants';
 import router from '../router';
 
@@ -19,6 +19,7 @@ export {
   fetchTradesBucketed,
   fetchTradeHistory,
   findTransactions,
+  fetchValuations,
   importWallet,
   openEncryptedKey,
   openLedger,
@@ -269,7 +270,7 @@ async function fetchMarkets({ commit }, { done }) {
   try {
     markets = await dex.fetchMarkets();
     commit('setMarkets', markets);
-    done();
+    done(markets);
     commit('endRequest', { identifier: 'fetchMarkets' });
   } catch (message) {
     alerts.networkException(message);
@@ -402,6 +403,20 @@ function findTransactions({ state, commit }) {
     .catch((message) => {
       commit('failRequest', { identifier: 'findTransactions', message });
     });
+}
+
+async function fetchValuations({ commit }, { done, symbols }) {
+  let valuations;
+  commit('startRequest', { identifier: 'fetchValuations' });
+
+  try {
+    valuations = await valuation.getValuations(symbols);
+    done(valuations);
+    commit('endRequest', { identifier: 'fetchValuations' });
+  } catch (message) {
+    alerts.networkException(message);
+    commit('failRequest', { identifier: 'fetchValuations', message });
+  }
 }
 
 async function formOrder({ commit }, { order }) {

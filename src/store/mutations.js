@@ -3,10 +3,11 @@ import Vue from 'vue';
 import moment from 'moment';
 
 import { requests } from '../constants';
-import { alerts, neo, dex, storage } from '../services';
+import { alerts, neo, dex, settings, storage } from '../services';
 
 export {
   addToOrderHistory,
+  appendValuationsToMarktsForPrevewing,
   clearActiveTransaction,
   clearRecentTransactions,
   clearSearchTransactions,
@@ -515,6 +516,20 @@ function setTradeHistory(state, tradeHistory) {
 
 function setTradesBucketed(state, apiBuckets) {
   state.tradeHistory.apiBuckets = apiBuckets;
+}
+
+function appendValuationsToMarktsForPrevewing(state, valuations) {
+  const lowercaseCurrency = settings.getCurrency().toLowerCase();
+
+  state.markets = state.markets.map((market) => {
+    const valuation = valuations[market.quoteCurrency];
+
+    return _.merge(
+      market,
+      valuation,
+      { unitValue: parseFloat(valuation[`price_${lowercaseCurrency}`]) },
+    );
+  });
 }
 
 function addToOrderHistory(state, newOrders) {
