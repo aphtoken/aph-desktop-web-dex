@@ -522,12 +522,12 @@ function appendValuationsToMarktsForPrevewing(state, valuations) {
   const lowercaseCurrency = settings.getCurrency().toLowerCase();
 
   state.markets = state.markets.map((market) => {
-    const valuation = valuations[market.quoteCurrency];
+    const valuation = valuations[market.baseCurrency];
 
     return _.merge(
       market,
       valuation,
-      { unitValue: parseFloat(valuation[`price_${lowercaseCurrency}`]) },
+      { baseUnitValue: parseFloat(valuation[`price_${lowercaseCurrency}`]) },
     );
   });
 }
