@@ -21,7 +21,7 @@
             <div class="label">{{$t('OPEN')}}</div>
             <div class="value">{{ $formatTokenAmount(tickerData.open24hr) }}</div>
           </div>
-          <div class="row"> 
+          <div class="row">
             <div class="label">{{$t('HIGH')}}</div>
             <div class="value">{{ $formatTokenAmount(tickerData.high24hr) }}</div>
           </div>
@@ -67,8 +67,9 @@ export default {
       return this.$store.state.currentMarket;
     },
     baseCurrencyUnitPrice() {
-      return this.storeStateCurrentMarket && this.$store.state.holdings.length ?
-        this.$services.neo.getHolding(this.storeStateCurrentMarket.baseAssetId).unitValue : 0;
+      if (!this.storeStateCurrentMarket) return 0;
+      const baseAsset = this.$services.neo.getHolding(this.storeStateCurrentMarket.baseAssetId);
+      return baseAsset ? baseAsset.unitValue : this.storeStateCurrentMarket.baseUnitValue || 0;
     },
     close24Hour() {
       return this.$store.state.tradeHistory &&
@@ -100,7 +101,7 @@ export default {
 #dex--marketselection {
   .header {
     @extend %tile-light;
-    
+
     flex: none;
     padding: $space $space 0;
 
@@ -149,7 +150,7 @@ export default {
         white-space: nowrap;
       }
 
-      &.row, 
+      &.row,
       .quote-volume {
         margin-top: $space-sm;
       }
