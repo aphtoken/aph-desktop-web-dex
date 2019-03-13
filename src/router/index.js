@@ -7,6 +7,7 @@ import { wallets } from '../services';
 Vue.use(Router);
 
 export default new Router({
+  mode: 'hash',
   routes: [
     {
       path: '/login',
@@ -73,7 +74,7 @@ export default new Router({
       path: '/app',
       component: require('@/components/AuthenticatedWrapper').default,
       beforeEnter: (to, from, next) => { // eslint-disable-line
-        if (wallets.getCurrentWallet()) {
+        if (wallets.getCurrentWallet() || _.startsWith(to.fullPath, '/app/trade')) {
           return next();
         }
 

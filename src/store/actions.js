@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import moment from 'moment';
 
-import { alerts, assets, dex, neo, network, wallets, ledger } from '../services';
+import { alerts, assets, dex, neo, network, wallets, ledger, valuation } from '../services';
 import { timeouts } from '../constants';
 import router from '../router';
 
@@ -19,6 +19,7 @@ export {
   fetchTradesBucketed,
   fetchTradeHistory,
   findTransactions,
+  fetchValuations,
   importWallet,
   openEncryptedKey,
   openLedger,
@@ -176,12 +177,12 @@ async function fetchBlockHeaderByHash({ state, commit }, { blockHash, done, fail
 
 async function fetchCommitState({ commit }) {
   const currentNetwork = network.getSelectedNetwork();
-  const currentWallet = wallets.getCurrentWallet();
+  const currentWalletAddress = wallets.getCurrentWalletAddress();
   let commitState;
 
   commit('startRequest', { identifier: 'fetchCommitState' });
 
-  const commitStorageKey = `commit.${currentWallet.address}.${currentNetwork.net}`;
+  const commitStorageKey = `commit.${currentWalletAddress}.${currentNetwork.net}`;
 
   try {
     commitState = await fetchCachedData(commitStorageKey);
@@ -191,7 +192,7 @@ async function fetchCommitState({ commit }) {
   }
 
   try {
-    commitState = await dex.fetchCommitState(currentWallet.address);
+    commitState = await dex.fetchCommitState(currentWalletAddress);
     commit('setCommitState', commitState);
     commit('endRequest', { identifier: 'fetchCommitState' });
   } catch (message) {
@@ -202,14 +203,14 @@ async function fetchCommitState({ commit }) {
 
 async function fetchHoldings({ commit }, { done, isRequestSilent } = {}) {
   const currentNetwork = network.getSelectedNetwork();
-  const currentWallet = wallets.getCurrentWallet();
+  const currentWalletAddress = wallets.getCurrentWalletAddress();
   let portfolio;
   let holdings;
 
   commit(isRequestSilent ? 'startSilentRequest' : 'startRequest',
     { identifier: 'fetchHoldings' });
 
-  const holdingsStorageKey = `holdings.${currentWallet.address}.${currentNetwork.net}`;
+  const holdingsStorageKey = `holdings.${currentWalletAddress}.${currentNetwork.net}`;
 
   // TODO: isn't this only useful if current state of holdings is empty? This should be optimized.
   try {
@@ -219,7 +220,7 @@ async function fetchHoldings({ commit }, { done, isRequestSilent } = {}) {
     commit('setHoldings', holdings);
   }
 
-  const portfolioStorageKey = `portfolios.${currentWallet.address}.${currentNetwork.net}`;
+  const portfolioStorageKey = `portfolios.${currentWalletAddress}.${currentNetwork.net}`;
   try {
     portfolio = await fetchCachedData(portfolioStorageKey);
     commit('setPortfolio', portfolio);
@@ -228,7 +229,7 @@ async function fetchHoldings({ commit }, { done, isRequestSilent } = {}) {
   }
 
   try {
-    holdings = await neo.fetchHoldings(currentWallet.address, false);
+    holdings = await neo.fetchHoldings(currentWalletAddress, false);
 
     commit('setHoldings', holdings.holdings);
     commit('setPortfolio', {
@@ -269,7 +270,7 @@ async function fetchMarkets({ commit }, { done }) {
   try {
     markets = await dex.fetchMarkets();
     commit('setMarkets', markets);
-    done();
+    done(markets);
     commit('endRequest', { identifier: 'fetchMarkets' });
   } catch (message) {
     alerts.networkException(message);
@@ -302,13 +303,13 @@ async function fetchOrderHistory({ state, commit }, { isRequestSilent }) {
 
 async function fetchRecentTransactions({ commit }) {
   const currentNetwork = network.getSelectedNetwork();
-  const currentWallet = wallets.getCurrentWallet();
+  const currentWalletAddress = wallets.getCurrentWalletAddress();
   let lastBlockIndex = 0;
   let recentTransactions;
 
   commit('startRequest', { identifier: 'fetchRecentTransactions' });
 
-  const transactionsStorageKey = `txs.${currentWallet.address}.${currentNetwork.net}`;
+  const transactionsStorageKey = `txs.${currentWalletAddress}.${currentNetwork.net}`;
 
   try {
     recentTransactions = await fetchCachedData(transactionsStorageKey);
@@ -323,7 +324,7 @@ async function fetchRecentTransactions({ commit }) {
   }
 
   try {
-    recentTransactions = await neo.fetchRecentTransactions(currentWallet.address, false, moment().subtract(30, 'days'), null, lastBlockIndex + 1); // eslint-disable-line
+    recentTransactions = await neo.fetchRecentTransactions(currentWalletAddress, false, moment().subtract(30, 'days'), null, lastBlockIndex + 1); // eslint-disable-line
     commit('setRecentTransactions', recentTransactions);
     commit('endRequest', { identifier: 'fetchRecentTransactions' });
   } catch (message) {
@@ -386,14 +387,14 @@ async function fetchSystemAssetBalances({ commit }, { forAddress, intents }) {
 }
 
 function findTransactions({ state, commit }) {
-  const currentWallet = wallets.getCurrentWallet();
+  const currentWalletAddress = wallets.getCurrentWalletAddress();
 
   commit('startRequest', { identifier: 'findTransactions' });
 
   const fromDate = state.searchTransactionFromDate;
   const toDate = state.searchTransactionToDate ? moment(state.searchTransactionToDate).add(1, 'days') : null;
   neo
-    .fetchRecentTransactions(currentWallet.address, true,
+    .fetchRecentTransactions(currentWalletAddress, true,
       fromDate, toDate)
     .then((data) => {
       commit('setSearchTransactions', data);
@@ -402,6 +403,38 @@ function findTransactions({ state, commit }) {
     .catch((message) => {
       commit('failRequest', { identifier: 'findTransactions', message });
     });
+}
+
+async function fetchValuations({ commit }, { done, symbols }) {
+  let valuations;
+  commit('startRequest', { identifier: 'fetchValuations' });
+
+  try {
+    valuations = await valuation.getValuations(symbols);
+    if (!valuations.SDUSD) {
+      // For now, force in SDUSD if it doesn't show up. TODO: We need data for this from somewhere.
+      valuations.SDUSD = {
+        available_supply: 0, // unknown supply
+        last_updated: 0,
+        max_supply: 1000000,
+        name: 'SDUSD',
+        percent_change_1h: 0,
+        percent_change_7d: 0,
+        percent_change_24h: 0,
+        price_usd: 1,
+        market_cap_sdusd: 0,
+        price_btc: 0,
+        rank: 0,
+        symbol: 'SDUSD',
+        total_supply: 0,
+      };
+    }
+    done(valuations);
+    commit('endRequest', { identifier: 'fetchValuations' });
+  } catch (message) {
+    alerts.networkException(message);
+    commit('failRequest', { identifier: 'fetchValuations', message });
+  }
 }
 
 async function formOrder({ commit }, { order }) {
@@ -528,7 +561,7 @@ async function placeOrder({ commit }, { order, done }) {
 }
 
 async function subscribeToMarket({ state, commit }, { market, isRequestSilent }) {
-  if (!market) {
+  if (!market || !state.socket.client) {
     return;
   }
   commit(isRequestSilent ? 'startSilentRequest' : 'startRequest',
@@ -537,10 +570,10 @@ async function subscribeToMarket({ state, commit }, { market, isRequestSilent })
   try {
     state.socket.client.sendObj({ op: 'subscribe', args: `orderBook:${market.marketName}` });
 
-    const currentWallet = wallets.getCurrentWallet();
+    const currentWalletAddress = wallets.getCurrentWalletAddress();
     state.socket.client.sendObj({
       op: 'subscribe',
-      args: `orderUpdates:${market.marketName}:${currentWallet.address}`,
+      args: `orderUpdates:${market.marketName}:${currentWalletAddress}`,
     });
 
     commit('endRequest', { identifier: 'subscribeToMarket' });
@@ -560,10 +593,10 @@ async function unsubscribeFromMarket({ state, commit }, { market }) {
   try {
     state.socket.client.sendObj({ op: 'unsubscribe', args: `orderBook:${market.marketName}` });
 
-    const currentWallet = wallets.getCurrentWallet();
+    const currentWalletAddress = wallets.getCurrentWalletAddress();
     state.socket.client.sendObj({
       op: 'unsubscribe',
-      args: `orderUpdates:${market.marketName}:${currentWallet.address}`,
+      args: `orderUpdates:${market.marketName}:${currentWalletAddress}`,
     });
 
     commit('endRequest', { identifier: 'unsubscribeFromMarket' });

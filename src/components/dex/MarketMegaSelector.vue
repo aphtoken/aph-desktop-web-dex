@@ -53,9 +53,11 @@ export default {
     baseCurrencies() {
       return _.uniq(_.map(this.$store.state.markets, 'baseCurrency'));
     },
+
     currencySymbol() {
       return this.$services.settings.getCurrencySymbol();
     },
+
     filteredMarkets() {
       try {
         let markets = this.$store.state.markets.filter((market) => {
@@ -67,7 +69,7 @@ export default {
         let nonZeroVolumeItems = 0;
         markets.forEach((market) => {
           const baseAsset = this.$services.neo.getHolding(market.baseAssetId);
-          const unitValue = baseAsset ? baseAsset.unitValue : 0;
+          const unitValue = baseAsset ? baseAsset.unitValue : market.baseUnitValue || 0;
           market.baseVolume = _.get(this.$store.state.tickerDataByMarket, `${market.marketName}.baseVolume`);
           market.volume = market.baseVolume * unitValue;
           if (market.volume > 0) {
@@ -333,5 +335,3 @@ export default {
   }
 }
 </style>
-
-

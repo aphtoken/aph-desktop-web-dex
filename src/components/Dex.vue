@@ -5,15 +5,20 @@
         <div class="grid--cell left-top">
           <router-view name="left-top"></router-view>
         </div>
-        <div class="grid--cell left-bottom">
+        <div v-if="isLoggedIn" class="grid--cell left-bottom">
           <router-view name="left-bottom"></router-view>
+        </div>
+        <div v-else class="grid--cell left-bottom">
+          <div>
+            <div @click="handleLoginToTradeClicked" class="login-to-trade-btn">{{ $t('loginToTrade') }}</div>
+          </div>
         </div>
       </div>
       <div class="grid--column column-middle">
         <div class="grid--cell middle-top">
           <router-view name="middle-top"></router-view>
         </div>
-        <div class="grid--cell middle-bottom">
+        <div v-if="isLoggedIn" class="grid--cell middle-bottom">
           <router-view name="middle-bottom"></router-view>
         </div>
       </div>
@@ -37,9 +42,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { defaultSettings } from '../constants';
 import DexDemoConfirmation from './modals/DexDemoConfirmation';
 import DexOutOfDate from './modals/DexOutOfDate';
 import assets from '../services/assets';
+import router from '../router';
 import storage from '../services/storage';
 
 export default {
@@ -57,6 +64,10 @@ export default {
   },
 
   computed: {
+    isLoggedIn() {
+      return !!this.$store.state.currentWallet;
+    },
+
     isOutOfDate() {
       if (!this.$store.state.latestVersion) {
         return true;
@@ -71,7 +82,7 @@ export default {
     },
 
     shouldShowOutOfDate() {
-      return this.isOutOfDate && !this.$store.state.acceptDexOutOfDate;
+      return this.isOutOfDate && !this.$store.state.acceptDexOutOfDate && this.isLoggedIn;
     },
 
     ...mapGetters([
@@ -81,19 +92,11 @@ export default {
   },
 
   created() {
-    this.setConnected();
-    this.connectionStatusInterval = setInterval(() => {
-      this.setConnected();
-    }, 1000);
-    this.marketsRefreshInterval = setInterval(() => {
-      this.loadMarkets();
-    }, this.$constants.intervals.MARKETS_POLLING);
-    this.completeSystemAssetWithdrawalsInterval = setInterval(() => {
-      this.$services.dex.completeSystemAssetWithdrawals();
-    }, this.$constants.intervals.COMPLETE_SYSTEM_WITHDRAWALS);
-    this.tickerRefreshInterval = setInterval(() => {
-      this.loadTickerData();
-    }, this.$constants.intervals.TICKER_POLLING);
+    if (this.isLoggedIn) {
+      this.handleCreatedIfLoggedIn();
+    } else {
+      this.handleCreatedIfPreviewing();
+    }
   },
 
   data() {
@@ -103,9 +106,105 @@ export default {
   },
 
   methods: {
-    loadMarkets() {
+    handleCreatedIfLoggedIn() {
+      this.setConnected();
+      this.connectionStatusInterval = setInterval(() => {
+        this.setConnected();
+      }, 1000);
+      this.marketsRefreshInterval = setInterval(() => {
+        this.loadMarkets();
+      }, this.$constants.intervals.MARKETS_POLLING);
+      this.completeSystemAssetWithdrawalsInterval = setInterval(() => {
+        this.$services.dex.completeSystemAssetWithdrawals();
+      }, this.$constants.intervals.COMPLETE_SYSTEM_WITHDRAWALS);
+      this.tickerRefreshInterval = setInterval(() => {
+        this.loadTickerData();
+      }, this.$constants.intervals.TICKER_POLLING);
+    },
+
+    handleCreatedIfPreviewing() {
+      this.setConnected();
+      this.connectionStatusInterval = setInterval(() => {
+        this.setConnected();
+      }, 1000);
+      this.marketsRefreshInterval = setInterval(() => {
+        this.loadMarkets();
+      }, this.$constants.intervals.MARKETS_POLLING);
+      this.tickerRefreshInterval = setInterval(() => {
+        this.loadTickerData();
+      }, this.$constants.intervals.TICKER_POLLING);
+    },
+
+    handleLoginToTradeClicked() {
+      router.replace(defaultSettings.LOGIN_ROUTE);
+    },
+
+    handleMountedIfLoggedIn() {
+      this.$store.commit('setShowPortfolioHeader', false);
+      this.loadMarkets();
+      this.loadTickerData();
+
+      this.$services.dex.completeSystemAssetWithdrawals();
+
+      this.$store.commit('setSocketOrderCreated', (message) => {
+        /* eslint-disable max-len */
+        this.$services.alerts.success(`${(message.side === 'bid' ? 'Buy' : 'Sell')} Order Created. x${message.data.quantity} @${message.data.price}`);
+        this.$store.dispatch('fetchHoldings');
+      });
+
+      const services = this.$services;
+      const store = this.$store;
+      store.commit('setSocketOrderMatched', (message) => {
+        /* eslint-disable max-len */
+        services.alerts.success(`${(message.side === 'bid' ? 'Buy' : 'Sell')} Order Filled. x${message.data.quantity} @${message.data.price}`);
+        // If the asset purchased is not a user asset, we must add it as one.
+        // Note: Since this runs from a mutation it is safe to add it directly)
+
+        const market = _.find(store.state.markets, { marketName: message.pair });
+
+        const userAssets = assets.getUserAssets();
+        let addedToken = false;
+        if (!_.has(userAssets, market.baseAssetId)) {
+          store.dispatch('addToken', {
+            hashOrSymbol: market.baseAssetId,
+          });
+          addedToken = true;
+        }
+        if (!_.has(userAssets, market.quoteAssetId)) {
+          store.dispatch('addToken', {
+            hashOrSymbol: market.quoteAssetId,
+          });
+          addedToken = true;
+        }
+
+        if (!addedToken) {
+          this.$store.dispatch('fetchHoldings');
+        }
+      });
+
+      store.commit('setSocketOrderCreationFailed', (message) => {
+        services.alerts.error(`Failed to Create ${(message.side === 'bid' ? 'Buy' : 'Sell')} Order. ${message.data.errorMessage}`);
+      });
+
+      store.commit('setSocketOrderMatchFailed', (message) => {
+        services.alerts.error(`Failed to Match ${(message.side === 'bid' ? 'Buy' : 'Sell')} x${message.data.quantity}. ${message.data.errorMessage}`);
+      });
+
+      services.neo.promptGASFractureIfNecessary();
+
+      this.setInfoAcceptedFromStorage();
+    },
+
+    handleMountedIfPreviewing() {
+      this.$store.commit('setShowPortfolioHeader', false);
+      this.loadMarkets(this.loadMarketValuations);
+      this.loadTickerData();
+      this.setInfoAcceptedFromStorage();
+    },
+
+    loadMarkets(done = _.noop) {
       this.$store.dispatch('fetchMarkets', {
-        done: () => {
+        done: (markets) => {
           if (!this.$store.state.currentMarket) {
             const marketData = this.$services.dex.getMarketDataFromName(this.$route.params.market);
             if (!marketData) {
@@ -123,7 +222,18 @@ export default {
 
             this.$store.commit('setCurrentMarket', marketData);
           }
+
+          done(markets);
         },
+      });
+    },
+
+    loadMarketValuations(markets) {
+      this.$store.dispatch('fetchValuations', {
+        done: (valuations) => {
+          this.$store.commit('appendValuationsToMarktsForPrevewing', valuations);
+        },
+        symbols: _.uniq(_.merge(_.map(markets, 'quoteCurrency'), _.map(markets, 'baseCurrency'))),
       });
     },
 
@@ -163,59 +273,11 @@ export default {
   },
 
   mounted() {
-    this.$store.commit('setShowPortfolioHeader', false);
-    this.loadMarkets();
-    this.loadTickerData();
-
-    this.$services.dex.completeSystemAssetWithdrawals();
-
-    this.$store.commit('setSocketOrderCreated', (message) => {
-      /* eslint-disable max-len */
-      this.$services.alerts.success(`${(message.side === 'bid' ? 'Buy' : 'Sell')} Order Created. x${message.data.quantity} @${message.data.price}`);
-      this.$store.dispatch('fetchHoldings');
-    });
-
-    const services = this.$services;
-    const store = this.$store;
-    store.commit('setSocketOrderMatched', (message) => {
-      /* eslint-disable max-len */
-      services.alerts.success(`${(message.side === 'bid' ? 'Buy' : 'Sell')} Order Filled. x${message.data.quantity} @${message.data.price}`);
-      // If the asset purchased is not a user asset, we must add it as one.
-      // Note: Since this runs from a mutation it is safe to add it directly)
-
-      const market = _.find(store.state.markets, { marketName: message.pair });
-
-      const userAssets = assets.getUserAssets();
-      let addedToken = false;
-      if (!_.has(userAssets, market.baseAssetId)) {
-        store.dispatch('addToken', {
-          hashOrSymbol: market.baseAssetId,
-        });
-        addedToken = true;
-      }
-      if (!_.has(userAssets, market.quoteAssetId)) {
-        store.dispatch('addToken', {
-          hashOrSymbol: market.quoteAssetId,
-        });
-        addedToken = true;
-      }
-
-      if (!addedToken) {
-        this.$store.dispatch('fetchHoldings');
-      }
-    });
-
-    store.commit('setSocketOrderCreationFailed', (message) => {
-      services.alerts.error(`Failed to Create ${(message.side === 'bid' ? 'Buy' : 'Sell')} Order. ${message.data.errorMessage}`);
-    });
-
-    store.commit('setSocketOrderMatchFailed', (message) => {
-      services.alerts.error(`Failed to Match ${(message.side === 'bid' ? 'Buy' : 'Sell')} x${message.data.quantity}. ${message.data.errorMessage}`);
-    });
-
-    services.neo.promptGASFractureIfNecessary();
-
-    this.setInfoAcceptedFromStorage();
+    if (this.isLoggedIn) {
+      this.handleMountedIfLoggedIn();
+    } else {
+      this.handleMountedIfPreviewing();
+    }
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -296,7 +358,7 @@ export default {
       }
 
       &.middle-top {
-        flex: none;
+        flex: 2;
       }
 
       & + .grid--cell {
@@ -334,6 +396,12 @@ export default {
       font-weight: GilroyMedium;
       margin-top: $space-lg;
     }
+  }
+
+  .login-to-trade-btn {
+    @extend %btn;
+
+    flex: none !important;
   }
 }
 </style>
