@@ -1,19 +1,20 @@
-import DomPortal from 'vue-dom-portal';
-import Vue from 'vue';
-import VueFlashMessage from 'vue-flash-message';
-import VueI18n from 'vue-i18n';
-import VueHighCharts from 'vue-highcharts';
-import VueNativeSock from 'vue-native-websocket';
 import _ from 'lodash';
 import accounting from 'accounting';
 import axios from 'axios';
+import DomPortal from 'vue-dom-portal';
+import IdleVue from 'idle-vue';
 import moment from 'moment';
+import Vue from 'vue';
+import VueFlashMessage from 'vue-flash-message';
+import VueHighCharts from 'vue-highcharts';
+import VueI18n from 'vue-i18n';
+import VueNativeSock from 'vue-native-websocket';
 
 // Services, etc.
 import { contacts, network, settings, wallets } from '@/services';
 
 // constants
-import { messages } from '@/constants';
+import { messages, timeouts } from '@/constants';
 
 // Initial Vue Libraries.
 import '@/error-handler';
@@ -57,6 +58,12 @@ Vue.use(VueFlashMessage);
 Vue.use(VueHighCharts);
 Vue.use(VueI18n);
 require('vue-flash-message/dist/vue-flash-message.min.css');
+
+const eventBus = new Vue();
+Vue.use(IdleVue, {
+  eventEmitter: eventBus,
+  idleTime: timeouts.IDLE,
+});
 
 Vue.use(VueNativeSock, network.getSelectedNetwork().websocketUri, {
   connectManually: true,
@@ -105,8 +112,17 @@ const i18n = new VueI18n({
 
 /* eslint-disable no-new */
 new Vue({
+  i18n,
+
+  onIdle() {
+    if(!!store.state.currentWallet) {
+      wallets.clearCurrentWallet();
+      store.commit('handleLogout');
+      router.push('/login');
+    }
+  },
+
   router,
   store,
-  i18n,
   ...App,
 }).$mount('#app');
