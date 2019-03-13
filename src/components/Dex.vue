@@ -112,6 +112,15 @@ export default {
               this.$router.push(this.$constants.defaultSettings.LANDING_ROUTE);
               return;
             }
+
+            // TODO: this should be better handled using an interval and cancelling once complete
+            if (!this.$store.state.socket.client || !this.$store.state.socket.isConnected) {
+              setTimeout(() => {
+                this.$store.commit('setCurrentMarket', marketData);
+              }, 200);
+              return;
+            }
+
             this.$store.commit('setCurrentMarket', marketData);
           }
         },
