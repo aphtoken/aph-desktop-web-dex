@@ -224,7 +224,7 @@ export default {
         done: (valuations) => {
           this.$store.commit('appendValuationsToMarktsForPrevewing', valuations);
         },
-        symbols: _.map(markets, 'quoteCurrency'),
+        symbols: _.uniq(_.merge(_.map(markets, 'quoteCurrency'), _.map(markets, 'baseCurrency'))),
       });
     },
 

@@ -411,6 +411,24 @@ async function fetchValuations({ commit }, { done, symbols }) {
 
   try {
     valuations = await valuation.getValuations(symbols);
+    if (!valuations.SDUSD) {
+      // For now, force in SDUSD if it doesn't show up. TODO: We need data for this from somewhere.
+      valuations.SDUSD = {
+        available_supply: 0, // unknown supply
+        last_updated: 0,
+        max_supply: 1000000,
+        name: 'SDUSD',
+        percent_change_1h: 0,
+        percent_change_7d: 0,
+        percent_change_24h: 0,
+        price_usd: 1,
+        market_cap_sdusd: 0,
+        price_btc: 0,
+        rank: 0,
+        symbol: 'SDUSD',
+        total_supply: 0,
+      };
+    }
     done(valuations);
     commit('endRequest', { identifier: 'fetchValuations' });
   } catch (message) {
