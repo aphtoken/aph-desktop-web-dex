@@ -115,11 +115,9 @@ new Vue({
   i18n,
 
   onIdle() {
-    if (store.state.currentWallet) {
-      wallets.clearCurrentWallet();
-      store.commit('handleLogout');
-      router.push('/login');
-    }
+    wallets.clearCurrentWallet();
+    store.commit('handleLogout');
+    router.push('/login');
   },
 
   router,
