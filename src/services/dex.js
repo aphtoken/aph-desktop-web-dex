@@ -1377,8 +1377,8 @@ export default {
 
             if (order.maxTakerFees > 0) {
               const aphHolding = neo.getHolding(store.state.currentNetwork.aph_hash);
-              if (aphHolding.totalBalance.isLessThan(order.maxTakerFees)) {
-                reject(`Order may require up to ${order.maxTakerFees} APH to be processed. Your current APH Balance is ${aphHolding.totalBalance}`);
+              if (aphHolding.availableBalance.isLessThan(order.maxTakerFees)) {
+                reject(`Order may require up to ${order.maxTakerFees} APH to be processed. Your current available APH to use for fees is ${aphHolding.availableBalance}`);
                 return;
               }
             }
