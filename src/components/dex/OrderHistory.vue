@@ -163,6 +163,10 @@ export default {
     },
 
     loadOrders() {
+      if (!this.$store.state.currentMarket) {
+        _.delay(this.loadOrders, 100);
+        return;
+      }
       this.$store.dispatch('fetchOrderHistory', { isRequestSilent: false });
     },
     loadOrdersSilently() {
